@@ -45,6 +45,10 @@ public final class Machine {
 		}
 	}
 
+	public void setProgramCounter(int programCounter) {
+		this.programCounter = programCounter;
+	}
+
 	public Labels getLabels() {
 		return this.labels;
 	}
