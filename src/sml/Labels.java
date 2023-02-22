@@ -1,5 +1,7 @@
 package sml;
 
+import sml.instruction.DivInstruction;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -64,7 +66,18 @@ public final class Labels {
 		return "";
 	}
 
-	// TODO: Implement equals and hashCode (needed in class Machine).
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Labels other) {
+			return Objects.equals(this.labels, other.labels);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() { return  labels.hashCode(); }
+
+	// Implement equals and hashCode (needed in class Machine).
 
 	/**
 	 * Removes the labels

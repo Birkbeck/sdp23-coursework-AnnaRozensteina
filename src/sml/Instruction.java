@@ -48,10 +48,24 @@ public abstract class Instruction {
 		return (getLabel() == null) ? "" : getLabel() + ": ";
 	}
 
-	// TODO: What does abstract in the declaration below mean?
-	//       (Write a short explanation.)
+	// What does abstract in the declaration below mean?
+	// (Write a short explanation.)
+
+	// It means that all subclasses (that are not themselves abstract) will need to provide an
+	// implementation for these superclass methods or alternatively be declared abstract themselves,
+	// otherwise the subclass won't compile. The abstract method
+	// It also means that the subclass won't have access to the method implementation that Instruction class
+	// superclass may have, it is essentially overriden here but not implemented.
+
 	@Override
 	public abstract String toString();
+
+	@Override
+	public abstract boolean equals(Object o);
+
+	@Override
+	public abstract int hashCode();
+
 
 	// TODO: Make sure that subclasses also implement equals and hashCode (needed in class Machine).
 }

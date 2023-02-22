@@ -4,6 +4,8 @@ import sml.Instruction;
 import sml.Machine;
 import sml.RegisterName;
 
+import java.util.Objects;
+
 // TODO: write a JavaDoc for the class
 
 /**
@@ -33,5 +35,20 @@ public class AddInstruction extends Instruction {
 	@Override
 	public String toString() {
 		return getLabelString() + getOpcode() + " " + result + " " + source;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof AddInstruction other) {
+			return Objects.equals(this.result, other.result)
+					&& Objects.equals(this.source, other.source)
+					&& this.OP_CODE == other.OP_CODE;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(result, source, OP_CODE);
 	}
 }
