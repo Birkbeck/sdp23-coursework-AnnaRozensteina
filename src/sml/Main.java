@@ -21,6 +21,7 @@ public class Main {
 
 			System.out.println("Here is the program; it has " + m.getProgram().size() + " instructions.");
 			System.out.println(m);
+			// System.out.println("Here are labels program can jump to: " + m.getLabels());
 
 			System.out.println("Beginning program execution.");
 			m.execute();

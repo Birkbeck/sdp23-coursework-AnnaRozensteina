@@ -67,5 +67,5 @@ public abstract class Instruction {
 	public abstract int hashCode();
 
 
-	// TODO: Make sure that subclasses also implement equals and hashCode (needed in class Machine).
+	// Make sure that subclasses also implement equals and hashCode (needed in class Machine).
 }

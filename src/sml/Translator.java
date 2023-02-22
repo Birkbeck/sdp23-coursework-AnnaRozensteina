@@ -109,7 +109,7 @@ public final class Translator {
             }
 
 
-            // TODO: add code for all other types of instructions
+            // add code for all other types of instructions
 
             // TODO: Then, replace the switch by using the Reflection API
 
