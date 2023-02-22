@@ -34,8 +34,19 @@ public final class Labels {
 	public int getAddress(String label) {
 		// TODO: Where can NullPointerException be thrown here?
 		//       (Write an explanation.)
+		// labels.get(label) can throw NPE.
+		// If a label doesn't exist in the program, a NullPointerException would be thrown at runtime.
+		// If jnz instruction is used but there is no label value passed, NPE would also be thrown.
+		//
 		//       Add code to deal with non-existent labels.
-		return labels.get(label);
+
+		if (labels.containsKey(label)) {
+			return labels.get(label);
+		}
+		else {
+			return -1;
+		}
+
 	}
 
 	/**

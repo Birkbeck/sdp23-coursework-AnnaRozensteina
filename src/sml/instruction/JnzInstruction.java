@@ -26,9 +26,12 @@ public class JnzInstruction extends Instruction {
     public int execute(Machine m) {
         int value1 = m.getRegisters().get(condition);
         if (value1 != 0 ) {
-            m.setProgramCounter(m.getLabels().getAddress(jumpLabel)-1);
+            return m.getLabels().getAddress(jumpLabel);
         }
-        return NORMAL_PROGRAM_COUNTER_UPDATE;
+        else {
+            return NORMAL_PROGRAM_COUNTER_UPDATE;
+        }
+
     }
 
     @Override
