@@ -34,8 +34,8 @@ public final class Labels {
 	public int getAddress(String label) {
 		// TODO: Where can NullPointerException be thrown here?
 		//       (Write an explanation.)
-		// labels.get(label) can throw NPE.
-		// If a label doesn't exist in the program, a NullPointerException would be thrown at runtime.
+		// labels.get(label) can throw NullPointerException.
+		// If a label doesn't exist in the program, NPE would be thrown at runtime.
 		// If jnz instruction is used but there is no label value passed, NPE would also be thrown.
 		//
 		//       Add code to deal with non-existent labels.
@@ -46,6 +46,9 @@ public final class Labels {
 		else {
 			return -1;
 		}
+
+		// TODO: at the moment program will not crash when encountering unknown jump label,
+		//  it will carry on execution and skip the instruction. Consider how I could warn user to help them debug.
 
 	}
 
