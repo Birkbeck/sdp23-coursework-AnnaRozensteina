@@ -1,5 +1,6 @@
 package sml;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,15 +34,21 @@ public final class Machine {
 	 * Execute the program in program, beginning at instruction 0.
 	 * Precondition: the program and its labels have been stored properly.
 	 */
-	public void execute() {
-		programCounter = 0;
-		registers.clear();
-		while (programCounter < program.size()) {
-			Instruction ins = program.get(programCounter);
-			int programCounterUpdate = ins.execute(this);
-			programCounter = (programCounterUpdate == NORMAL_PROGRAM_COUNTER_UPDATE)
-				? programCounter + 1
-				: programCounterUpdate;
+	public void execute() throws IOException {
+		try{
+			programCounter = 0;
+			registers.clear();
+			while (programCounter < program.size()) {
+				Instruction ins = program.get(programCounter);
+				int programCounterUpdate = ins.execute(this);
+				programCounter = (programCounterUpdate == NORMAL_PROGRAM_COUNTER_UPDATE)
+						? programCounter + 1
+						: programCounterUpdate;
+			}
+		}
+		catch (NullPointerException ex){
+			System.out.println("Program couldn't be executed.\n" + ex.getMessage());
+			throw new IOException();
 		}
 	}
 

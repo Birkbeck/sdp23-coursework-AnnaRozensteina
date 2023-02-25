@@ -24,8 +24,13 @@ public final class Labels {
 	 */
 	public void addLabel(String label, int address) {
 		Objects.requireNonNull(label);
-		// TODO: Add a check that there are no label duplicates.
-		labels.put(label, address);
+		//Add a check that there are no label duplicates.
+		if (!labels.containsKey(label)){
+			labels.put(label, address);
+		}
+		else{
+			throw new IllegalArgumentException("Label: " + label + " is duplicated. Labels must be unique.");
+		}
 	}
 
 	/**
@@ -35,8 +40,9 @@ public final class Labels {
 	 * @return the address the label refers to
 	 */
 	public int getAddress(String label) {
-		// TODO: Where can NullPointerException be thrown here?
-		//       (Write an explanation.)
+		// Where can NullPointerException be thrown here?
+		// (Write an explanation.)
+
 		// labels.get(label) can throw NullPointerException.
 		// If a label doesn't exist in the program, NPE would be thrown at runtime.
 		// If jnz instruction is used but there is no label value passed, NPE would also be thrown.
@@ -47,12 +53,8 @@ public final class Labels {
 			return labels.get(label);
 		}
 		else {
-			return -1;
+			throw new NullPointerException("Call to an unknown label " + label);
 		}
-
-		// TODO: at the moment program will not crash when encountering unknown jump label,
-		//  it will carry on execution and skip the instruction. Consider how I could warn user to help them debug.
-
 	}
 
 	/**

@@ -50,6 +50,10 @@ public final class Translator {
                 }
             }
         }
+        catch (IllegalArgumentException ex){
+            System.out.println("Program couldn't be read.\n" + ex.getMessage());
+            throw new IOException();
+        }
     }
 
     /**
