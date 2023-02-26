@@ -1,8 +1,9 @@
 package sml;
 
+import sml.instruction.InstructionFactory;
+
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
@@ -71,44 +72,10 @@ public final class Translator {
         if (line.isEmpty())
             return null;
 
-        // remove opcode from line and find the corresponding class
         String opcode = scan();
-        String instructionClassName = "sml.instruction." + opcode.substring(0, 1).toUpperCase() + opcode.substring(1) + "Instruction";
-        Class<?> InstructionClass = Class.forName(instructionClassName);
-
-        // split the rest of the line as parameters for instruction constructor
-        int countParams = line.split("\\s+").length;
-        Class[] paramType = new Class[countParams];
-        Object[] params = new Object[countParams];
-
-        // add label as all instructions will start with the label
-        paramType[0] = String.class;
-        params[0] = label;
-
-        // add types and values of all other constructor parameters
-        // TODO: find a better way to check type
-        for(int i = 1; i < countParams; i++){
-            String word = scan();
-            try{
-                params[i] = Register.valueOf(word);
-                paramType[i] = RegisterName.class;
-
-            } catch (IllegalArgumentException e) {
-                try{
-                    params[i] = Integer.parseInt(word);
-                    paramType[i] = int.class;
-                } catch (NumberFormatException ex) {
-                    params[i] = word;
-                    paramType[i] = String.class;
-                }
-            }
-        }
-
-        // find the correct constructor based on argument types
-        Constructor<?> InstructionConstructor = InstructionClass.getDeclaredConstructor(paramType);
-
-        // return new instruction with the correct arguments
-        return (Instruction) InstructionConstructor.newInstance(params);
+        String[] values = line.split("\\s+");
+        InstructionFactory factory = new InstructionFactory();
+        return factory.newInstanceOf(opcode,label, values);
 
             // add code for all other types of instructions
 
