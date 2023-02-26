@@ -1,9 +1,8 @@
 package sml;
 
-import sml.instruction.*;
-
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
@@ -32,7 +31,7 @@ public final class Translator {
     // prog (the program)
     // return "no errors were detected"
 
-    public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException {
+    public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException, Exception {
         try (var sc = new Scanner(new File(fileName), StandardCharsets.UTF_8)) {
             labels.reset();
             program.clear();
@@ -51,7 +50,7 @@ public final class Translator {
             }
         }
         catch (IllegalArgumentException ex){
-            System.out.println("Program couldn't be read.\n" + ex.getMessage());
+            System.out.println("Program could not be read.\n" + ex.getMessage());
             throw new IOException();
         }
     }
@@ -65,68 +64,60 @@ public final class Translator {
      * The input line should consist of a single SML instruction,
      * with its label already removed.
      */
-    private Instruction getInstruction(String label) {
+    private Instruction getInstruction(String label) throws Exception{
+        // TODO: Deal with specific exceptions for when class or constructor is not found
+        // TODO: create a factory class that handles building the instruction instance
+
         if (line.isEmpty())
             return null;
 
+        // remove opcode from line and find the corresponding class
         String opcode = scan();
-        switch (opcode) {
-            case AddInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new AddInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
+        String instructionClassName = "sml.instruction." + opcode.substring(0, 1).toUpperCase() + opcode.substring(1) + "Instruction";
+        Class<?> InstructionClass = Class.forName(instructionClassName);
 
-            case SubInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new SubInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
+        // split the rest of the line as parameters for instruction constructor
+        int countParams = line.split("\\s+").length;
+        Class[] paramType = new Class[countParams];
+        Object[] params = new Object[countParams];
 
-            case DivInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new DivInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
+        // add label as all instructions will start with the label
+        paramType[0] = String.class;
+        params[0] = label;
 
-            case MulInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new MulInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
+        // add types and values of all other constructor parameters
+        // TODO: find a better way to check type
+        for(int i = 1; i < countParams; i++){
+            String word = scan();
+            try{
+                params[i] = Register.valueOf(word);
+                paramType[i] = RegisterName.class;
 
-            case MovInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new MovInstruction(label, Register.valueOf(r), Integer.parseInt(s));
+            } catch (IllegalArgumentException e) {
+                try{
+                    params[i] = Integer.parseInt(word);
+                    paramType[i] = int.class;
+                } catch (NumberFormatException ex) {
+                    params[i] = word;
+                    paramType[i] = String.class;
+                }
             }
+        }
 
-            case OutInstruction.OP_CODE -> {
-                String r = scan();
-                return new OutInstruction(label, Register.valueOf(r));
-            }
+        // find the correct constructor based on argument types
+        Constructor<?> InstructionConstructor = InstructionClass.getDeclaredConstructor(paramType);
 
-            case JnzInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new JnzInstruction(label, Register.valueOf(r), s);
-            }
-
+        // return new instruction with the correct arguments
+        return (Instruction) InstructionConstructor.newInstance(params);
 
             // add code for all other types of instructions
 
-            // TODO: Then, replace the switch by using the Reflection API
+            // Then, replace the switch by using the Reflection API
 
             // TODO: Next, use dependency injection to allow this machine class
             //       to work with different sets of opcodes (different CPUs)
 
-            default -> {
-                System.out.println("Unknown instruction: " + opcode);
-            }
-        }
-        return null;
     }
-
 
     private String getLabel() {
         String word = scan();
