@@ -72,7 +72,7 @@ public final class Labels {
 	 * Compares two instances.
 	 *
 	 * @param o object to be compared with
-	 * @return true if o is equal to an instance of AddInstruction, otherwise false
+	 * @return true if o is equal to an instance of Labels, otherwise false
 	 */
 	@Override
 	public boolean equals(Object o) {
