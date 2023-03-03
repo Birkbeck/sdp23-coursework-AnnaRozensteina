@@ -8,14 +8,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
 
-import static sml.Registers.Register;
-
 /**
- * This class ....
+ * This class reads and translates an SML program.
  * <p>
  * The translator of a <b>S</b><b>M</b>al<b>L</b> program.
  *
- * @author ...
+ * @author BBK, arozen01
  */
 public final class Translator {
 
@@ -28,9 +26,14 @@ public final class Translator {
         this.fileName =  fileName;
     }
 
-    // translate the small program in the file into lab (the labels) and
-    // prog (the program)
-    // return "no errors were detected"
+    /**
+     * Reads and translates the SML program in the file into labels and program.
+     *
+     * @param labels list of all labels and their addresses
+     * @param program list of instructions in the program
+     * @throws IOException when program cannot be read
+     * @throws Exception when next Instruction can't be created
+     */
 
     public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException, Exception {
         try (var sc = new Scanner(new File(fileName), StandardCharsets.UTF_8)) {
@@ -54,38 +57,52 @@ public final class Translator {
             System.out.println("Program could not be read.\n" + ex.getMessage());
             throw new IOException();
         }
+            System.out.println("No errors were detected when reading the program.");
     }
 
     /**
-     * Translates the current line into an instruction with the given label
-     *
-     * @param label the instruction label
-     * @return the new instruction
+     * Translates the current line into an instruction with the given label.
      * <p>
      * The input line should consist of a single SML instruction,
      * with its label already removed.
+     *
+     * @param label the instruction label
+     * @return the new instruction
+     * @throws NoSuchMethodException if unknown opcode is used
+     * @throws ClassNotFoundException if instruction use is incorrect
      */
-    private Instruction getInstruction(String label) throws Exception{
-        // TODO: Deal with specific exceptions for when class or constructor is not found
-        // TODO: create a factory class that handles building the instruction instance
-
+    private Instruction getInstruction(String label) throws Exception {
         if (line.isEmpty())
             return null;
 
+        String instructionStr = line;
         String opcode = scan();
         String[] values = line.split("\\s+");
-        InstructionFactory factory = new InstructionFactory();
-        return factory.newInstanceOf(opcode,label, values);
 
-            // add code for all other types of instructions
-
-            // Then, replace the switch by using the Reflection API
+        try {
+            InstructionFactory factory = new InstructionFactory();
+            return factory.newInstanceOf(opcode,label, values);
+        }
+        catch (ClassNotFoundException e){
+            throw new ClassNotFoundException("An unknown opcode " + opcode + " was used.");
+        }
+        catch (NoSuchMethodException e){
+            throw new NoSuchMethodException("Incorrect use of " + opcode + " instruction: " + instructionStr);
+        }
+        catch (Exception e){
+            throw new Exception("Couldn't execute instruction" + instructionStr);
+        }
 
             // TODO: Next, use dependency injection to allow this machine class
             //       to work with different sets of opcodes (different CPUs)
-
     }
 
+    /**
+     * Scans the line and return the label. If there is no label, the scanning is
+     * undone and null is returned.
+     *
+     * @return label if it exists, null otherwise
+     */
     private String getLabel() {
         String word = scan();
         if (word.endsWith(":"))
@@ -96,9 +113,10 @@ public final class Translator {
         return null;
     }
 
-    /*
+    /**
      * Return the first word of line and remove it from line.
      * If there is no word, return "".
+     * @return next word in line or empty string
      */
     private String scan() {
         line = line.trim();
