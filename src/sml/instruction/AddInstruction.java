@@ -12,7 +12,6 @@ import java.util.Objects;
  * @author BBK, arozen01
  * @see Instruction
  */
-
 public class AddInstruction extends Instruction {
 
 	private final RegisterName result;
@@ -27,7 +26,6 @@ public class AddInstruction extends Instruction {
 	 * @param result register in which the result will be stored after addition
 	 * @param source register which is added to the result register
 	 */
-
 	public AddInstruction(String label, RegisterName result, RegisterName source) {
 		super(label, OP_CODE);
 		this.result = result;
